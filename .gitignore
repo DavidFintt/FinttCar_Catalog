@@ -1,0 +1,6 @@
+venv2
+venvCasa
+venvTrabalho
+migrations
+__pycache__
+db.sqlite3
