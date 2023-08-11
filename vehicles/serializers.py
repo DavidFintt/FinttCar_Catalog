@@ -4,16 +4,12 @@ from .validators import VehiclesValidators
 
 
 class vehiclesSerializer(serializers.ModelSerializer):
+
+    manufacturer = serializers.StringRelatedField()
+
     class Meta:
         model = Vehicles
-        fields = ['year', 'model', 'capacity', 'manufacturer']
-    # id = serializers.IntegerField()
-    manufacturer = serializers.StringRelatedField(
-        read_only=True
-    )
-    # year = serializers.IntegerField()
-    # model = serializers.CharField(max_length=20)
-    # capacity = serializers.IntegerField()
+        fields = ['id', 'year', 'model', 'capacity', 'manufacturer']
 
     def validate(self, attrs):
         VehiclesValidators(data=attrs, ErrorClass=serializers.ValidationError)
