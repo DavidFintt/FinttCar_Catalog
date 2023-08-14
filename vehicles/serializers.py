@@ -5,11 +5,11 @@ from .validators import VehiclesValidators
 
 class vehiclesSerializer(serializers.ModelSerializer):
 
-    manufacturer = serializers.StringRelatedField()
-
     class Meta:
         model = Vehicles
         fields = ['id', 'year', 'model', 'capacity', 'manufacturer']
+
+    manufacturer = serializers.StringRelatedField()
 
     def validate(self, attrs):
         VehiclesValidators(data=attrs, ErrorClass=serializers.ValidationError)
