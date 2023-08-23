@@ -15,26 +15,55 @@ class vehicleList(ModelViewSet):
     serializer_class = vehiclesSerializer
     pagination_class = vehiclePagination
 
-    def list(self, request, *args, **kwargs):
+    def List(self, request, *args, **kwargs):
         vehicles = self.get_queryset()
         serializer = vehiclesSerializer(
             instance= vehicles,
             many=True
             )
-        # try:
-        #     Manufacturer.objects.get(pk=request.data['manufacturer'])
-        # except:
-        #     return Response({'detail': 'Manufacturer not found'}, status=status.HTTP_404_NOT_FOUND)
-        # else:
-        #     serializer = vehiclesSerializer(
-        #         instance= vehicles,
-        #         data=request.data,
-        #         many=True
-        #     )
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
+    def Retrieve(self, request, *args, **kwargs):
+        vehicles = self.get_queryset()
+        serializer = vehiclesSerializer(
+            instance=vehicles,
+            many=False,
+            # data=request.data,
+            # partial=True
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def partial_update(self, request, *args, **kwargs):
+        vehicles = self.get_queryset()
+        serializer = vehiclesSerializer(
+            instance=vehicles,
+            many=False,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid()
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        vehicles = self.get_queryset()
+        serializer = vehiclesSerializer(
+            # instance=vehicles,
+            data=request.data,
+            many=False,
+        )
+        print(request.data)
+        print(request.data)
+        print(request.data)
+        print(request.data)
+        manufacturer_id = request.data['manufacturer']
+        if manufacturer_id is not None:
+            manufacturer = Manufacturer.objects.get(pk=manufacturer_id)
+            if serializer.is_valid(raise_exception=False):
+                serializer.save(
+                    manufacturer=manufacturer,
+                )
+                return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 # @api_view(http_method_names=['get', 'post'])
 # def lista_veiculos(request):
