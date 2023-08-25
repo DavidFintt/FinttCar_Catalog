@@ -40,7 +40,8 @@ INSTALLED_APPS = [
 
     # Rest Framework
     'rest_framework',
-
+    'rest_framework_simplejwt',
+    
     # apps
     'vehicles'
 
@@ -130,7 +131,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10
-}
