@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from ..models import Vehicles, Manufacturer
 from ..serializers import vehiclesSerializer
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -14,6 +15,7 @@ class vehicleList(ModelViewSet):
     queryset = Vehicles.objects.all().select_related('manufacturer')
     serializer_class = vehiclesSerializer
     pagination_class = vehiclePagination
+    permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         qs = super().get_queryset()
