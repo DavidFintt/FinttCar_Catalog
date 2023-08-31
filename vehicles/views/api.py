@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from ..models import Vehicles, Manufacturer
 from ..serializers import vehiclesSerializer
+from ..permissions import IsPartDealhersip
 from django.shortcuts import get_list_or_404, get_object_or_404
 
 class vehiclePagination(PageNumberPagination):
@@ -15,7 +16,7 @@ class vehicleList(ModelViewSet):
     queryset = Vehicles.objects.all().select_related('manufacturer')
     serializer_class = vehiclesSerializer
     pagination_class = vehiclePagination
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -26,6 +27,21 @@ class vehicleList(ModelViewSet):
             qs = qs.filter(manufacturer=manufacturer)
 
         return qs
+    
+    def get_object(self):
+        pk = self.kwargs.get['pk', '']
+        obj = get_list_or_404(
+            self.get_queryset(),
+            pk=pk
+        )
+
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+    
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'DELETE', 'POST', 'UPDATE']:
+            return [IsPartDealhersip(), ]
 
     def list(self, request, *args, **kwargs):
         vehicles = self.get_queryset()
@@ -45,16 +61,19 @@ class vehicleList(ModelViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
     def partial_update(self, request, *args, **kwargs):
-        vehicles = self.get_queryset()
+        vehicles = self.get_object()
         serializer = vehiclesSerializer(
             instance=vehicles,
             many=False,
             data=request.data,
             partial=True
         )
-        serializer.is_valid()
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.is_valid()
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.error_messages, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
         vehicles = self.get_queryset()
