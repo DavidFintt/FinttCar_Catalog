@@ -31,11 +31,10 @@ class vehicleList(ModelViewSet):
     def get_object(self):
         pk = self.kwargs.get('pk')
 
-        if self.request.method == 'GET':
-            obj = get_object_or_404(
-                self.get_queryset(),
-                pk=pk
-            )
+        obj = get_object_or_404(
+            self.get_queryset(),
+            pk=pk
+        )
         
 
         self.check_object_permissions(self.request, obj)
@@ -45,8 +44,7 @@ class vehicleList(ModelViewSet):
         if self.request.method in ['PATCH', 'DELETE', 'UPDATE']:
             return [IsPartDealhersip(), ]
         elif self.request.method == "CREATE":
-            method = "create"
-            return [IsPartDealhersip(method), ]
+            return [IsPartDealhersip(), ]
         else:
             return [IsAuthenticatedOrReadOnly()]
 
