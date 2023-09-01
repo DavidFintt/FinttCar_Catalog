@@ -16,7 +16,7 @@ class vehicleList(ModelViewSet):
     queryset = Vehicles.objects.all().select_related('manufacturer')
     serializer_class = vehiclesSerializer
     pagination_class = vehiclePagination
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    # permission_classes = [IsAuthenticatedOrReadOnly, ]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -29,19 +29,26 @@ class vehicleList(ModelViewSet):
         return qs
     
     def get_object(self):
-        pk = self.kwargs.get['pk', '']
-        obj = get_list_or_404(
-            self.get_queryset(),
-            pk=pk
-        )
+        pk = self.kwargs.get('pk')
+
+        if self.request.method == 'GET':
+            obj = get_object_or_404(
+                self.get_queryset(),
+                pk=pk
+            )
+        
 
         self.check_object_permissions(self.request, obj)
-
         return obj
     
     def get_permissions(self):
-        if self.request.method in ['PATCH', 'DELETE', 'POST', 'UPDATE']:
+        if self.request.method in ['PATCH', 'DELETE', 'UPDATE']:
             return [IsPartDealhersip(), ]
+        elif self.request.method == "CREATE":
+            method = "create"
+            return [IsPartDealhersip(method), ]
+        else:
+            return [IsAuthenticatedOrReadOnly()]
 
     def list(self, request, *args, **kwargs):
         vehicles = self.get_queryset()
@@ -71,7 +78,7 @@ class vehicleList(ModelViewSet):
             partial=True
         )
         if serializer.is_valid():
-            serializer.is_valid()
+            serializer.save()
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.error_messages, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
