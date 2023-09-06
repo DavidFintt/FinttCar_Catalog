@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from ..models import Vehicles, Manufacturer
+from ..models import Vehicles, Manufacturer, Dealership
 from ..serializers import vehiclesSerializer
 from ..permissions import IsPartDealhersip
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -43,7 +43,7 @@ class vehicleList(ModelViewSet):
     def get_permissions(self):
         if self.request.method in ['PATCH', 'DELETE', 'UPDATE']:
             return [IsPartDealhersip(), ]
-        elif self.request.method == "CREATE":
+        elif self.request.method == "CREATE" or self.request.method == "POST":
             return [IsPartDealhersip(), ]
         else:
             return [IsAuthenticatedOrReadOnly()]
@@ -81,18 +81,20 @@ class vehicleList(ModelViewSet):
         return Response(serializer.error_messages, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def create(self, request, *args, **kwargs):
-        vehicles = self.get_queryset()
         serializer = vehiclesSerializer(
             # instance=vehicles,
             data=request.data,
             many=False,
         )
         manufacturer_id = request.data['manufacturer']
-        if manufacturer_id is not None:
+        dealership_id = request.data['dealership']
+        if manufacturer_id is not None and dealership_id is not None:
             manufacturer = Manufacturer.objects.get(pk=manufacturer_id)
+            dealership = Dealership.objects.get(pk=dealership_id)
             if serializer.is_valid(raise_exception=False):
                 serializer.save(
                     manufacturer=manufacturer,
+                    dealership=dealership
                 )
                 return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

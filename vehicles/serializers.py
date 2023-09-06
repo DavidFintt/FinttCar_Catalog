@@ -7,7 +7,7 @@ class vehiclesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vehicles
-        fields = ['id', 'year', 'model', 'capacity', 'manufacturer', 'dealership','amount']
+        fields = ['id', 'year', 'model', 'capacity', 'price', 'manufacturer', 'dealership','amount']
 
     manufacturer = serializers.StringRelatedField()
     dealership = serializers.StringRelatedField()
