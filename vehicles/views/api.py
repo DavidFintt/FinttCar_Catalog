@@ -16,7 +16,7 @@ class vehicleList(ModelViewSet):
     queryset = Vehicles.objects.all().select_related('manufacturer')
     serializer_class = vehiclesSerializer
     pagination_class = vehiclePagination
-    # permission_classes = [IsAuthenticatedOrReadOnly, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -40,13 +40,13 @@ class vehicleList(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
     
-    def get_permissions(self):
-        if self.request.method in ['PATCH', 'DELETE', 'UPDATE']:
-            return [IsPartDealhersip(), ]
-        elif self.request.method == "CREATE" or self.request.method == "POST":
-            return [IsPartDealhersip(), ]
-        else:
-            return [IsAuthenticatedOrReadOnly()]
+    # def get_permissions(self):
+    #     if self.request.method in ['PATCH', 'DELETE', 'UPDATE']:
+    #         return [IsPartDealhersip(), ]
+    #     elif self.request.method == "CREATE" or self.request.method == "POST":
+    #         return [IsPartDealhersip(), ]
+    #     else:
+    #         return [IsAuthenticatedOrReadOnly()]
 
     def list(self, request, *args, **kwargs):
         vehicles = self.get_queryset()
