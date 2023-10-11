@@ -9,7 +9,7 @@ class Users(AbstractUser):
 
 class Dealership(models.Model):
     name = models.CharField(max_length=50)
-    email = models.CharField(max_length=20)
+    email = models.CharField(max_length=50)
 
     def __str__(self) -> str:
         return self.name
@@ -22,6 +22,8 @@ class Manufacturer(models.Model):
         return self.name
 
 class Vehicles(models.Model):
+    highlights = models.BooleanField(default=False)
+    new = models.BooleanField(default=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     year = models.IntegerField()
     model = models.CharField(max_length=20)
