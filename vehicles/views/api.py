@@ -52,7 +52,8 @@ class vehicleList(ModelViewSet):
         vehicles = self.get_queryset()
         serializer = vehiclesSerializer(
             instance= vehicles,
-            many=True
+            many=True,
+            context={'request':request}
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -60,7 +61,8 @@ class vehicleList(ModelViewSet):
         vehicles = self.get_queryset().get(pk=kwargs['pk'])
         serializer = vehiclesSerializer(
             instance=vehicles,
-            many=False
+            many=False,
+            context={'request':request}
             # data=request.data,
             # partial=True
         )
