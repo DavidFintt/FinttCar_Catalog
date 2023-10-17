@@ -21,6 +21,5 @@ class vehiclesSerializer(serializers.ModelSerializer):
 
     def get_img(self, obj):
         request = self.context.get('request')
-        img_path = obj.img.path
-        convert_path = os.path.abspath(img_path)
-        return convert_path
+        imgurl= request.build_absolute_uri(obj.img.url)
+        return imgurl
