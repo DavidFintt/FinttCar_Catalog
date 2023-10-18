@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from string import ascii_letters
 import random
 import os
+import string
 
 # Create your models here.
 
@@ -35,13 +36,17 @@ class Vehicles(models.Model):
     new = models.BooleanField(default=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     year = models.IntegerField()
-    model = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    model = models.CharField(max_length=50)
     capacity = models.IntegerField()
     amount = models.IntegerField()
-    price = models.IntegerField()
+    price = models.FloatField()
     dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.model
     
 
+    def save(self, *args, **kwargs):
+        self.model = self.model.title()
+        super().save(*args, **kwargs)
