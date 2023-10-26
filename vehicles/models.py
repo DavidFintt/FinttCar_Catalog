@@ -48,5 +48,6 @@ class Vehicles(models.Model):
     
 
     def save(self, *args, **kwargs):
-        self.model = self.model.title()
+        self.model = self.model.upper()
+        self.name  = self.name.title()
         super().save(*args, **kwargs)
