@@ -6,10 +6,11 @@ import os
 
 
 class vehiclesSerializer(serializers.ModelSerializer):
-    img = serializers.SerializerMethodField()
+    img_profile = serializers.SerializerMethodField()
+    img_2 = serializers.SerializerMethodField()
     class Meta:
         model = Vehicles
-        fields = ['id', 'year', 'model', 'capacity', 'price', 'manufacturer', 'dealership','amount', 'highlights', 'img', 'name']
+        fields = ['id', 'year', 'model', 'capacity', 'price', 'manufacturer', 'dealership','amount', 'highlights', 'img_profile', 'img_2', 'name']
 
     manufacturer = serializers.StringRelatedField()
     dealership = serializers.StringRelatedField()
@@ -19,7 +20,13 @@ class vehiclesSerializer(serializers.ModelSerializer):
         VehiclesValidators(data=attrs, ErrorClass=serializers.ValidationError)
         return super().validate(attrs)
 
-    def get_img(self, obj):
+    def get_img_profile(self, obj):
         request = self.context.get('request')
-        imgurl= request.build_absolute_uri(obj.img.url)
+        imgurl= request.build_absolute_uri(obj.img_profile.url)
+        return imgurl
+    
+    def get_img_2(self, obj):
+        request = self.context.get('request')
+        imgurl= request.build_absolute_uri(obj.img_2.url)
+        print(imgurl)
         return imgurl

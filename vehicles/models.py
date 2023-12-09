@@ -7,11 +7,11 @@ import string
 
 # Create your models here.
 
-def renameImage(instance,filename):
-    idVehicle = instance.pk
-    extension = os.path.splitext(filename)[1]
-    new_name = f'{idVehicle}{extension}' 
-    return new_name
+# def renameImage(instance,filename):
+#     idVehicle = instance.pk
+#     extension = os.path.splitext(filename)[1]
+#     new_name = f'{idVehicle}{extension}' 
+#     return new_name
 
 class Users(AbstractUser):
     dealership = models.ForeignKey('Dealership', on_delete=models.CASCADE, related_name="user_dealership", null=True)
@@ -31,7 +31,11 @@ class Manufacturer(models.Model):
         return self.name
 
 class Vehicles(models.Model):
-    img = models.ImageField(upload_to=renameImage)
+    img_profile = models.ImageField()
+    img_2 = models.ImageField()
+    img_3 = models.ImageField()
+    img_4 = models.ImageField()
+    img_5 = models.ImageField()
     highlights = models.BooleanField(default=False)
     new = models.BooleanField(default=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
